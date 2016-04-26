@@ -14,7 +14,7 @@ class BasePixelTransfer:
             return 65535
 
     def RGB2Gray(self, img):
-        dImg=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+        dImg=cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return dImg
 
     def InvertImage(self, img):
@@ -37,39 +37,39 @@ class BasePixelTransfer:
         dImg = np.uint8(dImg / np.max(dImg) * 255)
         return dImg
 
-    def Imhist(self, img, limitPixel):
-        dimension = len(img.shape)
-        if dimension == 2:
-            hist = self.Imhist2(img, limitPixel)
-        if dimension == 3:
-            hist = self.Imhist3(img, limitPixel)
-        return  hist
+    # def Imhist(self, img, limitPixel):
+    #     dimension = len(img.shape)
+    #     if dimension == 2:
+    #         hist = self.Imhist2(img, limitPixel)
+    #     if dimension == 3:
+    #         hist = self.Imhist3(img, limitPixel)
+    #     return  hist
 
-    def Imhist2(self, img, limitPixel):
+    def Imhist(self, img, limitPixel):
         hist = np.zeros((1, limitPixel + 1), np.uint32)
         for i in xrange(0, img.shape[0]):
             for j in xrange(0, img.shape[1]):
                 hist[0, img[i,j]] = hist[0, img[i, j]] + 1
         return hist
 
-    def Imhist3(self, img, limitPixel):
+    def ImhistColor(self, img, limitPixel):
         hist = np.zeros((3, limitPixel + 1), np.uint32)
-        hist[0, :] = self.Imhist2(img[:, :, 0], limitPixel)
-        hist[1, :] = self.Imhist2(img[:, :, 1], limitPixel)
-        hist[2, :] = self.Imhist2(img[:, :, 2], limitPixel)
+        hist[0, :] = self.Imhist(img[:, :, 0], limitPixel)
+        hist[1, :] = self.Imhist(img[:, :, 1], limitPixel)
+        hist[2, :] = self.Imhist(img[:, :, 2], limitPixel)
         return hist
 
     def HistEQ(self, img):
         dImg = np.zeros(img.shape,img.dtype)
         dimension = len(img.shape)
         if dimension == 2:
-            hist = self.Imhist2(img, self._NumericMax(img.dtype))
+            hist = self.Imhist(img, self._NumericMax(img.dtype))
             eqmap = self.GetHistEQMap(hist)
             for i in xrange(0,img.shape[0]):
                 for j in xrange(0,img.shape[1]):
                     dImg[i,j] = eqmap[img[i,j]]
         if dimension == 3:
-            hist = self.Imhist3(img, self._NumericMax(img.dtype))
+            hist = self.ImhistColor(img, self._NumericMax(img.dtype))
             eqmap = np.zeros(hist.shape, hist.dtype)
             eqmap[0,:] = self.GetHistEQMap(hist[0,:])
             eqmap[1,:] = self.GetHistEQMap(hist[1,:])
@@ -91,7 +91,7 @@ class BasePixelTransfer:
         dimension = len(img.shape)
         regMap = np.zeros(dstRegHist.shape, dstRegHist.dtype)
         if dimension == 2:
-            hist = self.Imhist2(img, self._NumericMax(img.dtype))
+            hist = self.Imhist(img, self._NumericMax(img.dtype))
             eqmap = self.GetHistEQMap(hist)
             regMap = self.GetHistEQMap(dstRegHist)
             revMap = self.ReverseHistMap(regMap)
@@ -100,7 +100,7 @@ class BasePixelTransfer:
                 for j in xrange(0,img.shape[1]):
                     dImg[i,j] = dstMap[img[i,j]]
         if dimension == 3:
-            hist = self.Imhist3(img, self._NumericMax(img.dtype))
+            hist = self.ImhistColor(img, self._NumericMax(img.dtype))
             eqmap = np.zeros(hist.shape, hist.dtype)
             eqmap[0, :] = self.GetHistEQMap(hist[0, :])
             eqmap[1, :] = self.GetHistEQMap(hist[1, :])
@@ -129,3 +129,23 @@ class BasePixelTransfer:
             for y in xrange(0, hist1.shape[1]):
                 dstHist[x,y] = hist2[x, hist1[x, y]]
         return dstHist
+
+    def HistDemo(self):
+        img = cv2.imread("lena.jpg")
+        # invertImg=self.InvertImage(img)
+        # logImg = self.LogImage(img, 10)
+        # powerImg = self.PowerImage(img, 2.0)
+        eqimg = self.HistEQ(img)
+        # gray = baseTransfer.RGB2Gray(img)
+        # eqgray = baseTransfer.HistEQ(gray)
+
+        reghist = self.ImhistColor(img, 255)
+        dImg, regMap = self.RegulateHist(eqimg, reghist)
+
+        cv2.namedWindow("lena")
+        cv2.imshow("lena", img)
+        cv2.namedWindow("eq")
+        cv2.imshow("eq", eqimg)
+        cv2.namedWindow("reg")
+        cv2.imshow("reg", dImg)
+        cv2.waitKey(0)
