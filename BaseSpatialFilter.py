@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import BasePixelTransfer
 
+
 class BaseSpatialFilter:
     def __init__(self):
         pass
