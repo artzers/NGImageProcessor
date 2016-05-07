@@ -129,3 +129,15 @@ class BaseFFTProcessor:
         cv2.namedWindow("ifft")
         cv2.imshow("ifft", ifft)
         cv2.waitKey(0)
+
+    def LaplaceFFTDemo2(self):
+        fimg = self.PrepareFFT()
+        kernel=[[0,-1,0],[-1,4,-1],[0,-1,0]]
+        fkernel = np.zeros(fimg.shape)
+        fkernel[0:3,0:3]=kernel
+        fkernel = np.fft.fftshift(np.fft.fft2(fkernel))
+        filterimg = fimg * fkernel
+        rimg = self.GetIFFT(filterimg)
+        cv2.namedWindow("laplace")
+        cv2.imshow("laplace", np.uint8(rimg))
+        cv2.waitKey(0)
