@@ -20,7 +20,7 @@ class BaseImageRestore:
         [u,v] = H.shape
         for i in xrange(0, u):
             for j in xrange(0, v):
-                if np.sqrt((i-u/2.0) ** 2.0 + (j - v / 2.0) ** 2.0) > radius or H[i, j] == 0:
+                if np.sqrt((i-u/2.0) ** 2.0 + (j - v / 2.0) ** 2.0) > radius or H[i, j] < 1e-5:
                     H[i, j] = 0
                 else:
                     H[i, j] =  1.0 / H[i, j]
@@ -33,7 +33,7 @@ class BaseImageRestore:
         fImg = np.fft.fftshift(np.fft.fft2(img))
         gImg = np.fft.ifft2(np.fft.ifftshift(fImg*H))#(fImg.dot(H))
         fgImg = np.fft.fftshift(np.fft.fft2(gImg))
-        H1 = self.IdeaLowHInverse(H, 200)
+        H1 = self.IdeaLowHInverse(H, 500)
         ggImg = np.fft.ifft2(np.fft.ifftshift(fgImg*H1))
         cv2.namedWindow("g")
         cv2.imshow("g", np.uint8(gImg))
