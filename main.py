@@ -27,10 +27,11 @@ img = baseTransfer.RGB2Gray(img)
 #ffter.LaplaceFFTDemo()
 #ffter.LaplaceFFTDemo2()
 #noiser = ImageNoiseGenerator.ImageNoiseGenerator()
-#noiser.GuassNoise(img, 100, 10, 5000)
+#noiser.GuassNoiseDemo(img, 0, 20, 5000)
 #img = img[0:512, 0:512]
 imageRestore = BaseImageRestore.BaseImageRestore()
-imageRestore.InverseFilterDemo(img)
+#imageRestore.WienerFilterDemo(img)
+imageRestore.CLQFilterDemo(img)
 
 
 
