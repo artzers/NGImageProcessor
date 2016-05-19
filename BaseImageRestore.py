@@ -80,7 +80,7 @@ class BaseImageRestore:
         p = np.zeros(img.shape)
         p[0:3, 0:3] = l
         P = np.fft.fftshift(np.fft.fft2(p))
-        N =  np.sum(noise ** 2.0)
+        N = 512 * 512 * (np.std(noise) ** 2.0 - np.mean(noise) ** 2.0)
         a = 0.25
         ggImg = self.CLSFilterOptimal(fgImg, gamma, H, P, N, a)
         #ggImg = self.CLSFilter(fgImg, gamma, H, P)
