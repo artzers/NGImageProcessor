@@ -7,11 +7,12 @@ import BaseSpatialFilter
 import BaseFFTProcessor
 import ImageNoiseGenerator
 import BaseImageRestore
+import RadonFilter
 
-baseTransfer = BasePixelTransfer.BasePixelTransfer()
-img = cv2.imread("lena.jpg")
+#baseTransfer = BasePixelTransfer.BasePixelTransfer()
+#img = cv2.imread("lena.jpg")
 # #baseTransfer.HistDemo()
-img = baseTransfer.RGB2Gray(img)
+#img = baseTransfer.RGB2Gray(img)
 # baseSpacer = BaseSpatialFilter.BaseSpatialFilter()
 # baseSpacer.LaplacianDemo(img)
 #baseSpacer.LoGDemo(img, 5, 1)
@@ -29,9 +30,10 @@ img = baseTransfer.RGB2Gray(img)
 #noiser = ImageNoiseGenerator.ImageNoiseGenerator()
 #noiser.GuassNoiseDemo(img, 0, 20, 5000)
 #img = img[0:512, 0:512]
-imageRestore = BaseImageRestore.BaseImageRestore()
+#imageRestore = BaseImageRestore.BaseImageRestore()
 #imageRestore.WienerFilterDemo(img)
-imageRestore.CLQFilterDemo(img)
+#imageRestore.CLQFilterDemo(img)
 
-
+radon = RadonFilter.RadonFilter()
+radon.RadonDemo()
 
