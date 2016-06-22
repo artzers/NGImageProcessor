@@ -9,7 +9,6 @@ class PathNode:
         self.val = self.h + self.g
         self.pnode = pnode
 
-
 class AStarFilter:
     def __init__(self):
         pass
@@ -29,7 +28,6 @@ class AStarFilter:
         #I suppose that path cost is 1 all of the image
         openList = dict()
         openImg = np.zeros(img.shape, np.uint8)#0 is not used, 1 is opened, 2 is closed
-        #fImg = np.zeros(img.shape, np.uint8)
         curPos = initPos
         openList[(curPos[0],curPos[1])]=PathNode(curPos[0],curPos[1],0,0, curPos)
         allList = openList.copy()
@@ -43,12 +41,11 @@ class AStarFilter:
             ind +=1
             if np.mod(ind, 1000) == 0:
                 print ind
-            if ind == 3000:
+            if ind == 50000:
                 flag = False
                 break
             sortedOpenList = sorted(openList.items(), lambda x,y:cmp(x[1].val, y[1].val))
             curPos = sortedOpenList[0][0]
-            #print curPos
             openList, openImg = self.SearchOpenNode(img, openImg, curPos, endPos, openList, allList)
             allList.update(openList)
             openImg[curPos] = 2
@@ -73,7 +70,7 @@ class AStarFilter:
             return False
 
     def CalDistance(self, i,j,endPos):
-        return 0.0 * (np.abs(i-endPos[0]) +np.abs(j-endPos[1]))
+        return 0.8 * (np.abs(i-endPos[0]) +np.abs(j-endPos[1]))
 
     def SearchOpenNode(self, img, openImg, curPos, endPos, openList, allList):
         for i in xrange(curPos[0]-1, curPos[0] + 2):
@@ -82,11 +79,9 @@ class AStarFilter:
                     continue
                 if openImg[i,j] == 0:
                     openImg[i,j] == 1
-                    #val = 1+ allList[(curPos[0],curPos[1])].val#+ np.sqrt((i-endPos[0]) ** 2.0 +(j-endPos[1]) ** 2.0)
                     openList[(i,j)] = PathNode(i,j,1+ allList[(curPos[0],curPos[1])].g, self.CalDistance(i,j,endPos) ,curPos)
                 if openImg[i,j] == 1:
                     tmpWet = 1+allList[(curPos[0],curPos[1])].g+ self.CalDistance(i,j,endPos)
-                    #np.sqrt((i-endPos[0]) ** 2.0 +(j-endPos[1]) ** 2.0)
                     if tmpWet < openList[(i,j)].val :
                         openList[(i,j)].pnode = curPos
                         openList[(i, j)].g = 1+allList[(curPos[0],curPos[1])].g
